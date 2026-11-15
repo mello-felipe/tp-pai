@@ -5,21 +5,23 @@ Ambiente gráfico para montar fluxos de processamento de imagens com blocos (Dea
 ## Rodar
 
 A versão do Python é fixada pelo [pyenv](https://github.com/pyenv/pyenv) no
-arquivo `.python-version` (3.12); as dependências ficam em `requirements*.txt`.
+arquivo `.python-version` (3.12). As dependências ficam em `requirements*.txt`
+e são instaladas num ambiente virtual `.venv` criado com esse Python.
 
 ```bash
 pyenv install 3.12 --skip-existing   # uma vez (Windows: pyenv-win)
 python --version                     # dentro da pasta do projeto: 3.12.x
-python -m pip install -r requirements.txt -r requirements-dev.txt
+python -m venv .venv                 # uma vez
+source .venv/bin/activate            # a cada terminal (Windows: .venv\Scripts\activate)
+pip install -r requirements.txt -r requirements-dev.txt
 python main.py
 python -m pytest                     # testes
 python build.py                      # executável em dist/PSE-Image
 ```
 
-Para isolar as dependências de outros projetos que usam o mesmo 3.12, use o
-plugin [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv):
-`pyenv virtualenv 3.12 pse-image && pyenv local pse-image` (não faça commit
-do `.python-version` alterado).
+Se `python --version` não mostrar 3.12, o pyenv não está ativo no shell:
+adicione `eval "$(pyenv init - zsh)"` (ou `bash`) ao `~/.zshrc` / `~/.bashrc`,
+ou crie o ambiente com `pyenv exec python -m venv .venv`.
 
 ## Estrutura
 
