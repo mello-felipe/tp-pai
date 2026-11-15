@@ -23,6 +23,12 @@ Se `python --version` não mostrar 3.12, o pyenv não está ativo no shell:
 adicione `eval "$(pyenv init - zsh)"` (ou `bash`) ao `~/.zshrc` / `~/.bashrc`,
 ou crie o ambiente com `pyenv exec python -m venv .venv`.
 
+Backend da nova interface web (FastAPI, em migração; só escuta em 127.0.0.1):
+
+```bash
+python -m pse.api            # http://127.0.0.1:8000/api/node-types
+```
+
 ## Estrutura
 
 ```
