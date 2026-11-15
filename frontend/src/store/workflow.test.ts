@@ -27,7 +27,7 @@ describe("connectEdge", () => {
 
 describe("withValue", () => {
   it("troca o valor sem mutar o nó original", () => {
-    const node: PseNode = { id: "n", position: { x: 0, y: 0 }, data: { typeKey: "t", values: { a: 1 } } };
+    const node: PseNode = { id: "n", type: "pse", position: { x: 0, y: 0 }, data: { typeKey: "t", values: { a: 1 } } };
     const next = withValue(node, "b", "x");
     expect(next.data.values).toEqual({ a: 1, b: "x" });
     expect(node.data.values).toEqual({ a: 1 });
