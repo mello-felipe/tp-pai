@@ -60,3 +60,10 @@ desktop.ini
 
 # Dear PyGui / ImGui (layout salvo automaticamente)
 imgui.ini
+
+# ---------------------------------------------------------------------------
+# Frontend (React + Vite)
+# ---------------------------------------------------------------------------
+node_modules/
+frontend/dist/
+*.tsbuildinfo

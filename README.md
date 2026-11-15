@@ -29,6 +29,16 @@ Backend da nova interface web (FastAPI, em migração; só escuta em 127.0.0.1):
 python -m pse.api            # http://127.0.0.1:8000/api/node-types
 ```
 
+Frontend (React + Vite + React Flow; requer Node.js 20+), em outro terminal:
+
+```bash
+cd frontend
+npm ci
+npm run dev                  # http://localhost:5173 (repassa /api para o backend)
+npm test                     # vitest
+npm run build                # typecheck + build em frontend/dist
+```
+
 ## Estrutura
 
 ```
