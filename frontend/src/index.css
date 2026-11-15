@@ -143,3 +143,81 @@ body {
   font: inherit;
   padding: 2px 4px;
 }
+
+.pse-node.failed {
+  border-color: var(--error);
+}
+
+.node-error,
+.node-status {
+  padding: 4px 8px 6px;
+  max-width: 240px;
+  font-size: 11px;
+}
+
+.node-error {
+  color: var(--error);
+}
+
+.node-status {
+  color: var(--ok);
+}
+
+.preview {
+  display: block;
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.preview img {
+  display: block;
+  max-width: 220px;
+  max-height: 220px;
+  margin: 0 auto 2px;
+  image-rendering: pixelated;
+}
+
+.file-button {
+  padding: 4px 8px;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-button:hover {
+  border-color: var(--accent);
+}
+
+.file-button.busy {
+  cursor: wait;
+  color: var(--muted);
+}
+
+.file-button input {
+  display: none;
+}
+
+.file-name {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+.action {
+  padding: 4px 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.react-flow__edge.rejected path {
+  stroke: var(--error);
+  stroke-dasharray: 4 3;
+}

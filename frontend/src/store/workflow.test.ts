@@ -1,7 +1,7 @@
 import type { Edge } from "@xyflow/react";
 import { describe, expect, it } from "vitest";
 
-import { connectEdge, withValue, type PseNode } from "./workflow";
+import { connectEdge, withFile, withValue, type PseNode } from "./workflow";
 
 const conn = (source: string, target: string, port = "imagem") => ({
   source,
@@ -31,5 +31,15 @@ describe("withValue", () => {
     const next = withValue(node, "b", "x");
     expect(next.data.values).toEqual({ a: 1, b: "x" });
     expect(node.data.values).toEqual({ a: 1 });
+  });
+});
+
+describe("withFile", () => {
+  it("guarda o caminho no valor e o nome original à parte", () => {
+    const node: PseNode = { id: "n", type: "pse", position: { x: 0, y: 0 }, data: { typeKey: "read_png", values: {} } };
+    const next = withFile(node, "path", "/tmp/x/abc.png", "foto.png");
+    expect(next.data.values).toEqual({ path: "/tmp/x/abc.png" });
+    expect(next.data.fileNames).toEqual({ path: "foto.png" });
+    expect(node.data.fileNames).toBeUndefined();
   });
 });

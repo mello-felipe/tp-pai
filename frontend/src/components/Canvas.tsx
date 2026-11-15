@@ -8,10 +8,11 @@ import {
   type Edge,
   type NodeTypes,
 } from "@xyflow/react";
-import type { DragEvent } from "react";
+import { useMemo, type DragEvent } from "react";
 
 import { DND_MIME } from "../lib/dnd";
 import { createsCycle } from "../lib/graph";
+import { edgeToLink, sameLink } from "../lib/payload";
 import { useWorkflow } from "../store/workflow";
 import { PseNodeView } from "./PseNodeView";
 
@@ -19,8 +20,18 @@ import { PseNodeView } from "./PseNodeView";
 const NODE_TYPES: NodeTypes = { pse: PseNodeView }; // ver PseNode em store/workflow.ts
 
 export function Canvas() {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } = useWorkflow();
+  const { nodes, edges, rejectedLinks, onNodesChange, onEdgesChange, onConnect, addNode } = useWorkflow();
   const { screenToFlowPosition } = useReactFlow();
+
+  // Ligações recusadas pelo backend ficam em vermelho, com o motivo no tooltip.
+  const shownEdges = useMemo(
+    () =>
+      edges.map((e) => {
+        const rejected = rejectedLinks.find((r) => sameLink(r, edgeToLink(e)));
+        return rejected ? { ...e, className: "rejected", label: rejected.error } : e;
+      }),
+    [edges, rejectedLinks],
+  );
 
   // Recusa ligações que formariam ciclo (o backend também recusa).
   const isValidConnection = (conn: Connection | Edge) => !createsCycle(edges, conn);
@@ -40,7 +51,7 @@ export function Canvas() {
     <div className="canvas" onDragOver={onDragOver} onDrop={onDrop}>
       <ReactFlow
         nodes={nodes}
-        edges={edges}
+        edges={shownEdges}
         nodeTypes={NODE_TYPES}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
