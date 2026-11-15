@@ -1,7 +1,7 @@
 import type { Edge } from "@xyflow/react";
 import { describe, expect, it } from "vitest";
 
-import { connectEdge } from "./workflow";
+import { connectEdge, withValue, type PseNode } from "./workflow";
 
 const conn = (source: string, target: string, port = "imagem") => ({
   source,
@@ -22,5 +22,14 @@ describe("connectEdge", () => {
     edges = connectEdge(edges, conn("a", "c", "y"));
     edges = connectEdge(edges, conn("a", "d"));
     expect(edges).toHaveLength(3);
+  });
+});
+
+describe("withValue", () => {
+  it("troca o valor sem mutar o nó original", () => {
+    const node: PseNode = { id: "n", position: { x: 0, y: 0 }, data: { typeKey: "t", values: { a: 1 } } };
+    const next = withValue(node, "b", "x");
+    expect(next.data.values).toEqual({ a: 1, b: "x" });
+    expect(node.data.values).toEqual({ a: 1 });
   });
 });
