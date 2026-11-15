@@ -36,7 +36,7 @@ describe("withValue", () => {
 
 describe("withFile", () => {
   it("guarda o caminho no valor e o nome original à parte", () => {
-    const node: PseNode = { id: "n", position: { x: 0, y: 0 }, data: { typeKey: "read_png", values: {} } };
+    const node: PseNode = { id: "n", type: "pse", position: { x: 0, y: 0 }, data: { typeKey: "read_png", values: {} } };
     const next = withFile(node, "path", "/tmp/x/abc.png", "foto.png");
     expect(next.data.values).toEqual({ path: "/tmp/x/abc.png" });
     expect(next.data.fileNames).toEqual({ path: "foto.png" });

@@ -5,6 +5,7 @@ import { edgeToLink, sameLink, toPayload } from "./payload";
 
 const node = (id: string, x: number): PseNode => ({
   id,
+  type: "pse",
   position: { x, y: 0 },
   data: { typeKey: "display", values: { a: 1 } },
 });
