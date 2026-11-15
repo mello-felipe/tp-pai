@@ -1,4 +1,5 @@
 import io
+import pathlib
 
 import numpy as np
 import pytest
@@ -10,7 +11,8 @@ from pse.api import create_app
 
 @pytest.fixture
 def client():
-    return TestClient(create_app(), base_url="http://127.0.0.1")
+    with TestClient(create_app(), base_url="http://127.0.0.1") as c:  # with: remove a pasta de uploads
+        yield c
 
 
 def test_health(client):
@@ -29,8 +31,8 @@ def test_node_types_lists_every_node_with_spec(client):
 
 
 def test_rejects_unknown_host():
-    client = TestClient(create_app(), base_url="http://evil.example")
-    assert client.get("/api/health").status_code == 400
+    with TestClient(create_app(), base_url="http://evil.example") as client:
+        assert client.get("/api/health").status_code == 400
 
 
 GRAY = np.arange(12, dtype=np.uint8).reshape(3, 4)
@@ -86,3 +88,41 @@ def test_action_saves_png(client, png, tmp_path):
     assert (np.array(PILImage.open(tmp_path / "out.png")) == GRAY).all()
     assert client.post("/api/nodes/s/actions/name").status_code == 422
     assert client.post("/api/nodes/ghost/actions/save").status_code == 404
+
+
+def upload(client, data, name="foto.png"):
+    return client.post("/api/images", files={"file": (name, data, "image/png")})
+
+
+def png_bytes(img=GRAY):
+    buf = io.BytesIO()
+    PILImage.fromarray(img).save(buf, format="PNG")
+    return buf.getvalue()
+
+
+def test_uploaded_png_feeds_read_png(client):
+    resp = upload(client, png_bytes(), "../../segredo/foto.png")
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["name"] == "foto.png" and (body["width"], body["height"]) == (4, 3)
+    assert body["path"].startswith(client.app.state.upload_dir)
+    nodes = [{"id": "r", "type": "read_png", "values": {"path": body["path"]}}]
+    assert client.put("/api/workflow", json={"nodes": nodes}).json()["nodes"]["r"]["error"] is None
+
+
+@pytest.mark.parametrize("data", [b"GIF89a....", b"\x89PNG\r\n\x1a\n" + b"lixo" * 10])
+def test_upload_rejects_non_png(client, data):
+    assert upload(client, data).status_code == 422
+    assert not list(pathlib.Path(client.app.state.upload_dir).iterdir())
+
+
+def test_upload_rejects_large_file():
+    with TestClient(create_app(max_upload=100), base_url="http://127.0.0.1") as client:
+        assert upload(client, png_bytes(np.zeros((64, 64), np.uint8)) + b"\0" * 200).status_code == 413
+
+
+def test_upload_dir_removed_on_shutdown():
+    with TestClient(create_app(), base_url="http://127.0.0.1") as client:
+        folder = pathlib.Path(client.app.state.upload_dir)
+        assert folder.is_dir()
+    assert not folder.exists()
