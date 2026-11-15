@@ -31,13 +31,19 @@ export function FileField({ param, fileName, onUploaded }: Props) {
   };
 
   return (
-    <label className="param">
+    <div className="param">
       <span>{param.label}</span>
-      <span className="file nodrag">
+      {/* input nativo escondido: o rótulo vira o botão (texto em português, sem "No file chosen") */}
+      <label className={`file-button nodrag${busy ? " busy" : ""}`}>
         <input type="file" accept="image/png,.png" disabled={busy} onChange={onChange} />
-        <span className="file-name">{busy ? "enviando…" : (fileName ?? "nenhum arquivo")}</span>
-      </span>
+        {busy ? "Enviando…" : fileName ? "Trocar PNG…" : "Escolher PNG…"}
+      </label>
+      {fileName && !busy && (
+        <span className="file-name" title={fileName}>
+          {fileName}
+        </span>
+      )}
       {error && <span className="node-error">{error}</span>}
-    </label>
+    </div>
   );
 }

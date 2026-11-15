@@ -181,15 +181,26 @@ body {
   image-rendering: pixelated;
 }
 
-.file {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.file-button {
+  padding: 4px 8px;
+  text-align: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.file input {
-  max-width: 200px;
-  font-size: 11px;
+.file-button:hover {
+  border-color: var(--accent);
+}
+
+.file-button.busy {
+  cursor: wait;
+  color: var(--muted);
+}
+
+.file-button input {
+  display: none;
 }
 
 .file-name {
