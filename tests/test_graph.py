@@ -124,3 +124,26 @@ def test_action_runs_once_with_flag_and_keeps_outputs_on_error():
     out = node.last_outputs["out"]
     node.trigger("go")
     assert node.error == "falhou" and node.last_outputs["out"] is out
+
+
+def test_add_node_with_external_id():
+    g = Graph()
+    s = g.add_node(SOURCE.create(), "fonte")
+    p = g.add_node(PASS.create(), "passa")
+    assert (s, p) == ("fonte", "passa")
+    g.connect(Link("fonte", "a", "passa", "in"))
+    g.evaluate()
+    assert (g.nodes["passa"].last_outputs["out"] == 10).all()
+
+
+def test_add_node_rejects_duplicate_id():
+    g = Graph()
+    g.add_node(PASS.create(), "x")
+    with pytest.raises(ValueError):
+        g.add_node(PASS.create(), "x")
+
+
+def test_generated_ids_skip_taken_ids():
+    g = Graph()
+    g.add_node(PASS.create(), 1)
+    assert g.add_node(PASS.create()) == 2

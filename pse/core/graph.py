@@ -7,27 +7,36 @@ from typing import NamedTuple
 from .node import Node
 
 
+NodeId = int | str  # gerado pelo Graph (int) ou vindo de fora, ex.: id do React Flow (str)
+
+
 class Link(NamedTuple):
-    src: int       # id do nó de origem
+    src: NodeId    # id do nó de origem
     src_port: str  # porta de saída
-    dst: int       # id do nó de destino
+    dst: NodeId    # id do nó de destino
     dst_port: str  # porta de entrada
 
 
 class Graph:
     def __init__(self) -> None:
-        self.nodes: dict[int, Node] = {}
+        self.nodes: dict[NodeId, Node] = {}
         self.links: set[Link] = set()
         self._next_id = 1
 
     # ---------------------------------------------------------------- edição
-    def add_node(self, node: Node) -> int:
-        nid = self._next_id
-        self._next_id += 1
+    def add_node(self, node: Node, nid: NodeId | None = None) -> NodeId:
+        """Adiciona o nó com o id dado (ou um id inteiro novo) e devolve o id."""
+        if nid is None:
+            while self._next_id in self.nodes:
+                self._next_id += 1
+            nid = self._next_id
+            self._next_id += 1
+        elif nid in self.nodes:
+            raise ValueError(f"id de nó repetido: {nid!r}")
         self.nodes[nid] = node
         return nid
 
-    def remove_node(self, nid: int) -> list[Link]:
+    def remove_node(self, nid: NodeId) -> list[Link]:
         """Remove o nó e devolve as ligações removidas junto com ele."""
         removed = [l for l in self.links if nid in (l.src, l.dst)]
         self.links.difference_update(removed)
@@ -52,10 +61,10 @@ class Graph:
     def disconnect(self, link: Link) -> None:
         self.links.discard(link)
 
-    def input_link(self, nid: int, port: str) -> Link | None:
+    def input_link(self, nid: NodeId, port: str) -> Link | None:
         return next((l for l in self.links if l.dst == nid and l.dst_port == port), None)
 
-    def _reaches(self, start: int, target: int) -> bool:
+    def _reaches(self, start: NodeId, target: NodeId) -> bool:
         """Existe caminho start -> ... -> target?"""
         stack, seen = [start], set()
         while stack:
@@ -69,11 +78,11 @@ class Graph:
         return False
 
     # -------------------------------------------------------------- execução
-    def topological_order(self) -> list[int]:
+    def topological_order(self) -> list[NodeId]:
         indeg = {nid: 0 for nid in self.nodes}
         for l in self.links:
             indeg[l.dst] += 1
-        queue = deque(sorted(n for n, d in indeg.items() if d == 0))
+        queue = deque(sorted((n for n, d in indeg.items() if d == 0), key=lambda n: (isinstance(n, str), n)))
         order = []
         while queue:
             n = queue.popleft()
