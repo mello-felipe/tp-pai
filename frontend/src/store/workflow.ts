@@ -19,7 +19,7 @@ export type PseNodeData = {
   typeKey: string;
   values: Record<string, ParamValue>;
 };
-export type PseNode = Node<PseNodeData>;
+export type PseNode = Node<PseNodeData, "pse">;
 
 interface WorkflowState {
   types: Record<string, NodeTypeSpec>;
@@ -50,6 +50,7 @@ export const useWorkflow = create<WorkflowState>((set, get) => ({
     if (!spec) return;
     const node: PseNode = {
       id: crypto.randomUUID(),
+      type: "pse",
       position,
       data: { typeKey, values: defaultValues(spec) },
     };

@@ -5,7 +5,8 @@ import { DND_MIME } from "../lib/dnd";
 import { useWorkflow } from "../store/workflow";
 import { PseNodeView } from "./PseNodeView";
 
-const NODE_TYPES: NodeTypes = { default: PseNodeView };
+// Tipo próprio: o tipo "default" do React Flow aplica borda, largura e padding no invólucro.
+const NODE_TYPES: NodeTypes = { pse: PseNodeView }; // ver PseNode em store/workflow.ts
 
 export function Canvas() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } = useWorkflow();

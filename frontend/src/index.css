@@ -92,6 +92,7 @@ body {
 }
 
 .port-row {
+  position: relative; /* alças ficam na borda do bloco, alinhadas à linha da porta */
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -99,7 +100,6 @@ body {
 }
 
 .port {
-  position: relative;
   color: var(--muted);
 }
 
