@@ -1,58 +1,58 @@
 # PSE-Image
 
-Ambiente gráfico para montar fluxos de processamento de imagens com blocos (Dear PyGui).
+*Problem-Solving Environment* para processamento de imagens (TP de Processamento
+e Análise de Imagens, PUC Minas). O usuário monta fluxos de processamento
+ligando blocos num canvas, sem programar, parametriza os blocos e vê o
+resultado de cada etapa.
 
-## Rodar
+- **Interface:** web, em React + [React Flow](https://reactflow.dev) (`frontend/`).
+- **Backend:** Python + FastAPI (`pse/api/`), que executa o grafo de blocos (`pse/core/`, `pse/nodes/`).
+- A interface antiga em Dear PyGui (`python main.py`, `pse/ui/`) continua no
+  repositório até a migração terminar e será removida depois.
 
-A versão do Python é fixada pelo [pyenv](https://github.com/pyenv/pyenv) no
-arquivo `.python-version` (3.12). As dependências ficam em `requirements*.txt`
-e são instaladas num ambiente virtual `.venv` criado com esse Python.
+## Início rápido
+
+Requisitos: [pyenv](https://github.com/pyenv/pyenv) (Python 3.12) e Node.js 20+.
 
 ```bash
-pyenv install 3.12 --skip-existing   # uma vez (Windows: pyenv-win)
-python --version                     # dentro da pasta do projeto: 3.12.x
-python -m venv .venv                 # uma vez
-source .venv/bin/activate            # a cada terminal (Windows: .venv\Scripts\activate)
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
-python main.py
-python -m pytest                     # testes
-python build.py                      # executável em dist/PSE-Image
+python -m pse.api                          # terminal 1: backend em 127.0.0.1:8000
+
+cd frontend && npm ci && npm run dev       # terminal 2: abra http://localhost:5173
 ```
 
-Se `python --version` não mostrar 3.12, o pyenv não está ativo no shell:
-adicione `eval "$(pyenv init - zsh)"` (ou `bash`) ao `~/.zshrc` / `~/.bashrc`,
-ou crie o ambiente com `pyenv exec python -m venv .venv`.
+Passo a passo, testes, fluxo de git e problemas comuns: **[DEVELOPMENT.md](DEVELOPMENT.md)**.
 
-Backend da nova interface web (FastAPI, em migração; só escuta em 127.0.0.1):
+## Documentação
 
-```bash
-python -m pse.api            # http://127.0.0.1:8000/api/node-types
-```
-
-Frontend (React + Vite + React Flow; requer Node.js 20+), em outro terminal:
-
-```bash
-cd frontend
-npm ci
-npm run dev                  # http://localhost:5173 (repassa /api para o backend)
-npm test                     # vitest
-npm run build                # typecheck + build em frontend/dist
-```
+| Arquivo | Para quê |
+|---|---|
+| [DEVELOPMENT.md](DEVELOPMENT.md) | Rodar, testar, contribuir, arquitetura, API e como estender os cards |
+| [frontend/AGENTS.md](frontend/AGENTS.md) | Regras para agentes de IA (Claude Code, Codex...) que mexem **só** no frontend |
 
 ## Estrutura
 
 ```
 pse/
-  core/    NodeSpec/Param (esqueleto do nó), Node, Graph (execução em ordem topológica)
-  nodes/   UM ARQUIVO POR NÓ — descobertos automaticamente e exibidos na paleta
-    _template.py   modelo para copiar (arquivos com "_" no início são ignorados)
+  core/      NodeSpec/Param (esqueleto do nó), Node, Graph (execução em ordem topológica)
+  nodes/     UM ARQUIVO POR NÓ, descoberto automaticamente e exibido na paleta
+    _template.py     modelo para copiar (arquivos com "_" no início são ignorados)
     read_png.py      Ler PNG (imagem colorida, RGB)
     to_grayscale.py  Escala de Cinza
     display.py       Exibir (cinza ou RGB)
     save_png.py      Salvar PNG (cinza ou RGB)
-  ui/      Dear PyGui: paleta + canvas; gerado a partir dos NodeSpec
-tests/     testes do grafo + teste de contrato que valida todo arquivo de nó
-assets/    fonte com acentos (DejaVu Sans)
+  api/       backend FastAPI: rotas, validação, workspace (grafo persistente), upload
+  ui/        interface antiga em Dear PyGui (será removida)
+frontend/    React + Vite + React Flow + zustand
+  src/
+    api/          chamadas HTTP ao backend
+    components/   paleta, canvas, card do bloco (PseNodeView) e widgets de parâmetro
+    hooks/        sincronização do fluxo com o backend
+    lib/          funções puras (com testes)
+    store/        estado do fluxo (zustand)
+tests/       testes do backend: grafo, contrato dos nós, API, workspace
+assets/      fonte com acentos (usada pela UI em Dear PyGui)
 ```
 
 ## Criando um nó
@@ -79,9 +79,9 @@ def execute(inputs: dict, params: dict) -> dict:
     return {"binária": a, "máscara": b}
 ```
 
-Não precisa registrar nada: o arquivo aparece na paleta ao abrir o app, e o
-`build.py` o inclui no executável. Rode `pytest`: o teste de contrato
-valida o esqueleto de todo nó.
+Não precisa registrar nada nem mexer no frontend: o arquivo aparece na paleta
+e o card é montado a partir do `NodeSpec`. O `build.py` inclui o nó no
+executável. Rode `pytest`: o teste de contrato valida o esqueleto de todo nó.
 
 Imagens: cinza = `(altura, largura)`, colorida = `(altura, largura, 3)`, sempre
 `uint8`. Os nós de processamento devem usar `require_gray` (o TP trabalha em tons
@@ -90,19 +90,20 @@ de cinza); para aceitar as duas, use `require_image`.
 Regra do TP: nada de métodos prontos (OpenCV, `scipy.ndimage`, `PIL.ImageFilter`...).
 Pillow só para ler/gravar PNG.
 
-Tipos de parâmetro: `int`, `float` (sliders), `choice` (combo, com `choices=(...)`),
-`bool`, `text`, `dir` (texto + seletor de pasta), `file_open`, `file_save` e
+Tipos de parâmetro: `int`, `float` (sliders), `choice` (select, com `choices=(...)`),
+`bool`, `text`, `dir` (texto), `file_open` (envio de PNG), `file_save` e
 `action` (botão: ao clicar, `execute` roda uma vez com `params[nome] = True`).
 `execute` pode devolver `"_status": "mensagem"` para mostrar um aviso verde no nó.
-Para algo especial, como a matriz de pesos da
-convolução, adicione um tipo novo em `App._param_widget` (`pse/ui/app.py`).
+Para algo especial, como a matriz de pesos da convolução, crie um tipo novo:
+veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 
 ## Comportamento
 
 - Cada mudança (ligação, parâmetro, arquivo) reavalia o fluxo; um nó só executa
-  de novo se suas entradas ou parâmetros mudaram.
-- Uma entrada aceita uma única ligação; uma saída pode alimentar vários blocos.
-- Ligações que formariam ciclo são ignoradas.
+  de novo se suas entradas ou parâmetros mudaram. Mover blocos não reavalia.
+- Uma entrada aceita uma única ligação (a nova substitui a antiga); uma saída
+  pode alimentar vários blocos.
+- Ligações que formariam ciclo são bloqueadas no canvas e recusadas pelo backend.
 - `Exibir` e `Salvar PNG` repassam a imagem, então podem ficar no meio do fluxo.
 - `Salvar PNG` grava ao clicar em **Salvar**: `<Caminho>/<Nome>.png`. Caminho vazio =
   `./img` na raiz do projeto (no executável, ao lado do `.exe`); caminho relativo
@@ -117,3 +118,4 @@ convolução, adicione um tipo novo em `App._param_widget` (`pse/ui/app.py`).
 - [ ] Diferença entre imagens
 - [ ] Operação morfológica (operação + elemento estruturante)
 - [ ] Complemento
+- [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
