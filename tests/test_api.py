@@ -1,5 +1,9 @@
+import io
+
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
+from PIL import Image as PILImage
 
 from pse.api import create_app
 
@@ -27,3 +31,58 @@ def test_node_types_lists_every_node_with_spec(client):
 def test_rejects_unknown_host():
     client = TestClient(create_app(), base_url="http://evil.example")
     assert client.get("/api/health").status_code == 400
+
+
+GRAY = np.arange(12, dtype=np.uint8).reshape(3, 4)
+
+
+@pytest.fixture
+def png(tmp_path):
+    path = tmp_path / "in.png"
+    PILImage.fromarray(GRAY).save(path)
+    return str(path)
+
+
+def flow(png, save_path=""):
+    return {"nodes": [{"id": "r", "type": "read_png", "values": {"path": png}},
+                      {"id": "g", "type": "to_grayscale"},
+                      {"id": "d", "type": "display"},
+                      {"id": "s", "type": "save_png", "values": {"name": "out", "path": save_path}}],
+            "links": [{"src": "r", "src_port": "imagem", "dst": "g", "dst_port": "imagem"},
+                      {"src": "g", "src_port": "cinza", "dst": "d", "dst_port": "imagem"},
+                      {"src": "d", "src_port": "imagem", "dst": "s", "dst_port": "imagem"}]}
+
+
+def decode(resp):
+    assert resp.status_code == 200 and resp.headers["content-type"] == "image/png"
+    return np.array(PILImage.open(io.BytesIO(resp.content)))
+
+
+def test_workflow_runs_and_serves_pngs(client, png):
+    body = client.put("/api/workflow", json=flow(png)).json()
+    assert body["nodes"]["d"]["error"] is None
+    assert body["nodes"]["d"]["preview"]["channels"] == 1
+    assert (decode(client.get("/api/nodes/d/preview.png")) == GRAY).all()
+    assert (decode(client.get("/api/nodes/r/outputs/imagem.png"))[..., 0] == GRAY).all()
+
+
+def test_workflow_validation_errors(client):
+    bad_type = {"nodes": [{"id": "x", "type": "nope"}]}
+    assert client.put("/api/workflow", json=bad_type).status_code == 422
+    bad_id = {"nodes": [{"id": "../x", "type": "display"}]}
+    assert client.put("/api/workflow", json=bad_id).status_code == 422
+
+
+def test_missing_images_are_404(client):
+    assert client.get("/api/nodes/x/preview.png").status_code == 404
+    client.put("/api/workflow", json={"nodes": [{"id": "d", "type": "display"}]})
+    assert client.get("/api/nodes/d/outputs/imagem.png").status_code == 404
+
+
+def test_action_saves_png(client, png, tmp_path):
+    client.put("/api/workflow", json=flow(png, str(tmp_path)))
+    state = client.post("/api/nodes/s/actions/save").json()
+    assert state["error"] is None and state["status"].startswith("salvo em")
+    assert (np.array(PILImage.open(tmp_path / "out.png")) == GRAY).all()
+    assert client.post("/api/nodes/s/actions/name").status_code == 422
+    assert client.post("/api/nodes/ghost/actions/save").status_code == 404
