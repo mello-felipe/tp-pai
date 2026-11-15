@@ -33,7 +33,7 @@ export function Canvas() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         deleteKeyCode={["Delete", "Backspace"]}
-        fitView
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }} // sem fitView: o 1º bloco não dá zoom de 2x
       >
         <Background />
         <Controls />
