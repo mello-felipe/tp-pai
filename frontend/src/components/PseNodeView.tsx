@@ -1,10 +1,12 @@
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 
 import { useWorkflow, type PseNode } from "../store/workflow";
+import { ParamField } from "./params/ParamField";
 
 /** Bloco no canvas: título, uma alça por porta de entrada (esquerda) e de saída (direita). */
-export function PseNodeView({ data, selected }: NodeProps<PseNode>) {
+export function PseNodeView({ id, data, selected }: NodeProps<PseNode>) {
   const spec = useWorkflow((s) => s.types[data.typeKey]);
+  const setValue = useWorkflow((s) => s.setValue);
   if (!spec) return <div className="pse-node error">tipo desconhecido: {data.typeKey}</div>;
 
   const rows = Math.max(spec.inputs.length, spec.outputs.length);
@@ -33,6 +35,18 @@ export function PseNodeView({ data, selected }: NodeProps<PseNode>) {
           </div>
         ))}
       </div>
+      {spec.params.length > 0 && (
+        <div className="params">
+          {spec.params.map((p) => (
+            <ParamField
+              key={p.name}
+              param={p}
+              value={data.values[p.name]}
+              onChange={(v) => setValue(id, p.name, v)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

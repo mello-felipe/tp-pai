@@ -27,9 +27,15 @@ interface WorkflowState {
   edges: Edge[];
   setTypes: (types: NodeTypeSpec[]) => void;
   addNode: (typeKey: string, position: XYPosition) => void;
+  setValue: (nodeId: string, name: string, value: ParamValue) => void;
   onNodesChange: OnNodesChange<PseNode>;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
+}
+
+/** Novo nó com o valor trocado (sem mutar o original). */
+export function withValue(node: PseNode, name: string, value: ParamValue): PseNode {
+  return { ...node, data: { ...node.data, values: { ...node.data.values, [name]: value } } };
 }
 
 /** Uma entrada aceita só uma ligação: a nova substitui a antiga. */
@@ -56,6 +62,8 @@ export const useWorkflow = create<WorkflowState>((set, get) => ({
     };
     set({ nodes: [...get().nodes, node] });
   },
+  setValue: (nodeId, name, value) =>
+    set({ nodes: get().nodes.map((n) => (n.id === nodeId ? withValue(n, name, value) : n)) }),
   onNodesChange: (changes) => set({ nodes: applyNodeChanges(changes, get().nodes) }),
   onEdgesChange: (changes) => set({ edges: applyEdgeChanges(changes, get().edges) }),
   onConnect: (conn) => set({ edges: connectEdge(get().edges, conn) }),

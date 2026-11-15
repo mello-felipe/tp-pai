@@ -1,7 +1,17 @@
-import { Background, Controls, MiniMap, ReactFlow, useReactFlow, type NodeTypes } from "@xyflow/react";
+import {
+  Background,
+  Controls,
+  MiniMap,
+  ReactFlow,
+  useReactFlow,
+  type Connection,
+  type Edge,
+  type NodeTypes,
+} from "@xyflow/react";
 import type { DragEvent } from "react";
 
 import { DND_MIME } from "../lib/dnd";
+import { createsCycle } from "../lib/graph";
 import { useWorkflow } from "../store/workflow";
 import { PseNodeView } from "./PseNodeView";
 
@@ -11,6 +21,9 @@ const NODE_TYPES: NodeTypes = { pse: PseNodeView }; // ver PseNode em store/work
 export function Canvas() {
   const { nodes, edges, onNodesChange, onEdgesChange, onConnect, addNode } = useWorkflow();
   const { screenToFlowPosition } = useReactFlow();
+
+  // Recusa ligações que formariam ciclo (o backend também recusa).
+  const isValidConnection = (conn: Connection | Edge) => !createsCycle(edges, conn);
 
   const onDragOver = (event: DragEvent) => {
     event.preventDefault();
@@ -32,6 +45,7 @@ export function Canvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        isValidConnection={isValidConnection}
         deleteKeyCode={["Delete", "Backspace"]}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }} // sem fitView: o 1º bloco não dá zoom de 2x
       >

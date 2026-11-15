@@ -118,3 +118,28 @@ body {
   color: var(--error);
   border-color: var(--error);
 }
+
+.params {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 8px 8px;
+  border-top: 1px solid var(--border);
+}
+
+.param {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.param.inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+.param input[type="text"],
+.param select {
+  font: inherit;
+  padding: 2px 4px;
+}
