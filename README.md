@@ -115,4 +115,6 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 - [x] Diferença entre imagens
 - [x] Operação morfológica (operação + elemento estruturante)
 - [x] Complemento
-- [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
+- [x] Base de imagens (`samples/`)
+- [x] Executável com o frontend embutido (`python build.py`)
+- [ ] Manual de utilização e vídeo

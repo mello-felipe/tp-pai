@@ -62,8 +62,9 @@ sozinhas; mudanças no backend exigem reiniciar o `python -m pse.api`.
 O estado do fluxo fica na memória do backend: reiniciar o backend e recarregar
 a página começa um fluxo vazio.
 
-`python main.py` faz o mesmo que `python -m pse.api` (porta 8000) e é o ponto
-de entrada do executável.
+`python main.py` é o ponto de entrada do executável: sobe o backend (porta 8000,
+ou outra livre), serve o frontend compilado em `frontend/dist` (se existir) e
+abre o navegador. Depois de `npm run build`, ele dispensa o `npm run dev`.
 
 ## Testes e verificação
 
@@ -84,11 +85,18 @@ npm run build                          # typecheck (tsc) + build em frontend/dis
 ## Executável
 
 ```bash
-python build.py                        # PyInstaller: dist/PSE-Image
+python build.py                        # npm ci + npm run build + PyInstaller: dist/PSE-Image
+python build.py --skip-frontend        # sem Node: reaproveita frontend/dist já compilado
 ```
 
-Hoje o executável empacota só o backend (`main.py`). Embutir o frontend
-(build do React servido pelo FastAPI) é uma tarefa pendente.
+O executável (`dist/PSE-Image`, no Windows `dist\PSE-Image.exe`) é um arquivo
+único com backend, nós e frontend. Ao abrir, ele mostra uma janela de terminal
+com o endereço, abre o navegador e roda até a janela ser fechada. A pasta
+`img/` (padrão do Salvar PNG) é criada ao lado do executável.
+
+O PyInstaller gera executável só para o sistema em que roda: para Windows,
+rode o `build.py` no Windows. Na apresentação, o build precisa de Python 3.12
+com `requirements*.txt` e, sem `--skip-frontend`, de Node.js 20+.
 
 ## Fluxo de trabalho (git)
 
