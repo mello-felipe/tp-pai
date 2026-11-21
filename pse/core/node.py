@@ -27,8 +27,11 @@ class Param:
       "choice"               combo (exige choices)
       "bool"                 checkbox
       "text"                 campo de texto
-      "dir"                  campo de texto + botão para escolher pasta
-      "file_open" | "file_save"  botão que abre o seletor de arquivo
+      "dir"                  campo de texto (pasta no computador que roda o backend)
+      "file_open"            botão que envia um PNG; o valor é o caminho no backend
+      "file_save"            campo de texto (caminho de arquivo)
+      "kernel"               matriz de pesos quadrada e de lado ímpar (até 9x9);
+                             default = tupla de tuplas; min/max limitam cada peso
       "action"               botão: ao clicar, execute() roda uma vez com
                              params[name] = True (nas execuções normais é False)
     """

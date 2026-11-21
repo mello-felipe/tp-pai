@@ -5,10 +5,11 @@ import pytest
 from PIL import Image as PILImage
 
 from pse.core import NodeError, require_gray
+from pse.api.values import merge_values
 from pse.nodes import discover
 
 TYPES = discover()
-KINDS = {"int", "float", "choice", "bool", "text", "dir", "file_open", "file_save", "action"}
+KINDS = {"int", "float", "choice", "bool", "text", "dir", "file_open", "file_save", "kernel", "action"}
 
 
 def run(key, inputs=None, **params):
@@ -32,6 +33,8 @@ def test_node_skeleton_is_valid(key):
             assert p.min is not None and p.max is not None
         if p.kind == "choice":
             assert p.default in p.choices
+        if p.kind == "kernel":
+            merge_values(spec, {p.name: p.default})  # padrão precisa ser uma matriz válida
 
 
 def test_expected_nodes_exist():
