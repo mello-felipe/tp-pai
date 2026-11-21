@@ -13,6 +13,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, FastAPI, HTTPException, Path, Response, UploadFile
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from ..core import NodeType
 from ..nodes import discover
@@ -26,7 +27,8 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 NodeIdPath = Annotated[str, Path(pattern=ID_PATTERN)]
 
 
-def create_app(types: dict[str, NodeType] | None = None, max_upload: int = MAX_UPLOAD) -> FastAPI:
+def create_app(types: dict[str, NodeType] | None = None, max_upload: int = MAX_UPLOAD,
+               static_dir: str | None = None) -> FastAPI:
     types = discover() if types is None else types
     workspace = Workspace(types)
     upload_dir = tempfile.mkdtemp(prefix="pse-image-")
@@ -83,6 +85,8 @@ def create_app(types: dict[str, NodeType] | None = None, max_upload: int = MAX_U
         return _png(workspace, nid, OUT + port)
 
     app.include_router(api)
+    if static_dir is not None:
+        app.mount("/", StaticFiles(directory=static_dir, html=True), name="frontend")  # depois do /api
     return app
 
 

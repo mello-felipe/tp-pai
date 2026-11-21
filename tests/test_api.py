@@ -126,3 +126,24 @@ def test_upload_dir_removed_on_shutdown():
         folder = pathlib.Path(client.app.state.upload_dir)
         assert folder.is_dir()
     assert not folder.exists()
+
+
+def test_serves_built_frontend_next_to_api(tmp_path):
+    (tmp_path / "index.html").write_text("<title>PSE-Image</title>")
+    with TestClient(create_app(static_dir=str(tmp_path)), base_url="http://127.0.0.1") as c:
+        assert "PSE-Image" in c.get("/").text
+        assert c.get("/api/health").json() == {"ok": True}
+
+
+def test_without_static_dir_root_is_404(client):
+    assert client.get("/").status_code == 404
+
+
+def test_frontend_dist_finds_build(tmp_path, monkeypatch):
+    import pse.api.static as static
+    monkeypatch.setattr(static, "project_root", lambda: str(tmp_path))
+    assert static.frontend_dist() is None
+    dist = tmp_path / "frontend" / "dist"
+    dist.mkdir(parents=True)
+    (dist / "index.html").write_text("")
+    assert static.frontend_dist() == str(dist)
