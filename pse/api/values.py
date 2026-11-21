@@ -1,11 +1,13 @@
 """Validação dos valores de parâmetros vindos do frontend."""
 from __future__ import annotations
 
+import math
 from typing import Any
 
 from ..core import NodeSpec, Param
 
 MAX_TEXT = 1024
+MAX_KERNEL = 9
 TEXT_KINDS = {"text", "dir", "file_open", "file_save"}
 
 
@@ -36,6 +38,8 @@ def _coerce(p: Param, value: Any) -> Any:
             if value not in p.choices:
                 raise ValueError
             return value
+        if p.kind == "kernel":
+            return _kernel(p, value)
         if p.kind in TEXT_KINDS:
             if not isinstance(value, str) or len(value) > MAX_TEXT:
                 raise ValueError
@@ -43,3 +47,21 @@ def _coerce(p: Param, value: Any) -> Any:
     except (TypeError, ValueError) as e:
         raise WorkflowError(f"valor inválido para o parâmetro '{p.name}': {value!r}") from e
     raise WorkflowError(f"tipo de parâmetro não suportado: {p.kind}")
+
+
+def _kernel(p: Param, value: Any) -> list[list[float]]:
+    if not isinstance(value, (list, tuple)) or not value:
+        raise TypeError
+    n = len(value)
+    if n % 2 == 0 or n > MAX_KERNEL:
+        raise ValueError
+    rows = []
+    for row in value:
+        if not isinstance(row, (list, tuple)) or len(row) != n:
+            raise ValueError
+        if any(isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) for v in row):
+            raise ValueError
+        lo = -math.inf if p.min is None else p.min
+        hi = math.inf if p.max is None else p.max
+        rows.append([float(min(max(v, lo), hi)) for v in row])
+    return rows

@@ -109,3 +109,30 @@ def test_trigger_action(ws):
         ws.trigger("s", "v")
     with pytest.raises(KeyError):
         ws.trigger("ghost", "go")
+
+
+KERNEL = NodeType("k", NodeSpec(title="K", category="t", outputs=("img",),
+                                params=(Param("w", "W", "kernel", ((0, 0, 0), (0, 1, 0), (0, 0, 0)), -10, 10),)),
+                  lambda i, p: {"img": np.zeros((1, 1), np.uint8)})
+
+
+def test_kernel_values_are_validated_and_clamped():
+    ws = Workspace({"k": KERNEL})
+    ws.sync(wf([("n", "k", {"w": [[1, 2, 3], [4, 50, 6], [7, 8, -90]]})]))
+    assert ws.graph.nodes["n"].values["w"] == [[1, 2, 3], [4, 10, 6], [7, 8, -10]]
+    ws.sync(wf([("n", "k", {})]))
+    assert ws.graph.nodes["n"].values["w"] == ((0, 0, 0), (0, 1, 0), (0, 0, 0))
+
+
+@pytest.mark.parametrize("bad", [
+    [[1, 2], [3, 4]],                                      # lado par
+    [[1, 2, 3]],                                           # não quadrada
+    [[1] * 11] * 11,                                       # maior que 9x9
+    [[1, 1, 1], [1, "x", 1], [1, 1, 1]],                   # texto
+    [[1, 1, 1], [1, True, 1], [1, 1, 1]],                  # booleano
+    "3x3",
+    [],
+])
+def test_invalid_kernels_raise(bad):
+    with pytest.raises(WorkflowError):
+        Workspace({"k": KERNEL}).sync(wf([("n", "k", {"w": bad})]))
