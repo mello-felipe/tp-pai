@@ -5,6 +5,7 @@ import { useWorkflow, type PseNode } from "../store/workflow";
 import type { ParamSpec } from "../types";
 import { ActionButton } from "./params/ActionButton";
 import { FileField } from "./params/FileField";
+import { KernelEditor } from "./params/KernelEditor";
 import { ParamField } from "./params/ParamField";
 
 /** Bloco no canvas: título, portas, parâmetros, miniatura e mensagens do backend. */
@@ -23,6 +24,10 @@ export function PseNodeView({ id, data, selected }: NodeProps<PseNode>) {
           fileName={data.fileNames?.[p.name]}
           onUploaded={(path, name) => setFile(id, p.name, path, name)}
         />
+      );
+    if (p.kind === "kernel")
+      return (
+        <KernelEditor key={p.name} param={p} value={data.values[p.name]} onChange={(k) => setValue(id, p.name, k)} />
       );
     if (p.kind === "action")
       return <ActionButton key={p.name} nodeId={id} param={p} onResult={(r) => setNodeResult(id, r)} />;

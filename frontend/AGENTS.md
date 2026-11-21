@@ -45,7 +45,7 @@ Antes de terminar qualquer tarefa: `npm run typecheck`, `npm test` e
 | `src/components/Palette.tsx` | Paleta por categoria; arrastar ou clicar para adicionar |
 | `src/components/Canvas.tsx` | React Flow: drop, ligações, bloqueio de ciclos, ligações recusadas |
 | `src/components/PseNodeView.tsx` | O card do bloco (tipo de nó `pse` no React Flow) |
-| `src/components/params/` | Widgets de parâmetro: `ParamField`, `FileField`, `ActionButton` |
+| `src/components/params/` | Widgets de parâmetro: `ParamField`, `FileField`, `KernelEditor`, `ActionButton` |
 | `src/lib/` | Funções puras, cada uma com `*.test.ts` |
 
 ## Como o card é montado
