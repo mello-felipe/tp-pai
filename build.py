@@ -18,7 +18,6 @@ PyInstaller.__main__.run([
     "--noconfirm", "--onefile", "--windowed",
     "--name", "PSE-Image",
     *hidden,
-    "--add-data", f"{os.path.join(ROOT, 'assets')}{os.pathsep}assets",
     "--distpath", os.path.join(ROOT, "dist"),
     "--workpath", os.path.join(ROOT, "build"),
     "--specpath", os.path.join(ROOT, "build"),
