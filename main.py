@@ -29,11 +29,11 @@ def main() -> None:
     port = pick_port()
     url = f"http://{HOST}:{port}"
     if static:
-        print(f"PSE-Image em {url} (feche esta janela para encerrar)")
+        print(f"PSE-Image em {url} (feche esta janela para encerrar)", flush=True)
         threading.Timer(1.5, webbrowser.open, args=(url,)).start()
     else:
         print("Frontend não compilado: rode 'npm run build' em frontend/ "
-              f"ou use 'npm run dev'. Backend em {url}")
+              f"ou use 'npm run dev'. Backend em {url}", flush=True)
     uvicorn.run(create_app(static_dir=static), host=HOST, port=port)
 
 
