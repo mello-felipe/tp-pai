@@ -26,6 +26,7 @@ Passo a passo, testes, fluxo de git e problemas comuns: **[DEVELOPMENT.md](DEVEL
 
 | Arquivo | Para quê |
 |---|---|
+| [MANUAL.md](MANUAL.md) | Manual de utilização: montar fluxos e usar cada bloco |
 | [DEVELOPMENT.md](DEVELOPMENT.md) | Rodar, testar, contribuir, arquitetura, API e como estender os cards |
 | [frontend/AGENTS.md](frontend/AGENTS.md) | Regras para agentes de IA (Claude Code, Codex...) que mexem **só** no frontend |
 
@@ -115,4 +116,7 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 - [ ] Diferença entre imagens
 - [ ] Operação morfológica (operação + elemento estruturante)
 - [ ] Complemento
-- [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
+- [x] Base de imagens (`samples/`)
+- [ ] Executável com o frontend embutido
+- [x] Manual de utilização (`MANUAL.md`)
+- [ ] Vídeo de demonstração (4–5 min)
