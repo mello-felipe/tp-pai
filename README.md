@@ -7,8 +7,6 @@ resultado de cada etapa.
 
 - **Interface:** web, em React + [React Flow](https://reactflow.dev) (`frontend/`).
 - **Backend:** Python + FastAPI (`pse/api/`), que executa o grafo de blocos (`pse/core/`, `pse/nodes/`).
-- A interface antiga em Dear PyGui (`python main.py`, `pse/ui/`) continua no
-  repositório até a migração terminar e será removida depois.
 
 ## Início rápido
 
@@ -43,7 +41,6 @@ pse/
     display.py       Exibir (cinza ou RGB)
     save_png.py      Salvar PNG (cinza ou RGB)
   api/       backend FastAPI: rotas, validação, workspace (grafo persistente), upload
-  ui/        interface antiga em Dear PyGui (será removida)
 frontend/    React + Vite + React Flow + zustand
   src/
     api/          chamadas HTTP ao backend
@@ -52,7 +49,7 @@ frontend/    React + Vite + React Flow + zustand
     lib/          funções puras (com testes)
     store/        estado do fluxo (zustand)
 tests/       testes do backend: grafo, contrato dos nós, API, workspace
-assets/      fonte com acentos (usada pela UI em Dear PyGui)
+main.py      ponto de entrada: sobe o backend (usado pelo executável)
 ```
 
 ## Criando um nó

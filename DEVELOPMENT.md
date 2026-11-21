@@ -62,7 +62,8 @@ sozinhas; mudanças no backend exigem reiniciar o `python -m pse.api`.
 O estado do fluxo fica na memória do backend: reiniciar o backend e recarregar
 a página começa um fluxo vazio.
 
-A interface antiga em Dear PyGui ainda roda com `python main.py`.
+`python main.py` faz o mesmo que `python -m pse.api` (porta 8000) e é o ponto
+de entrada do executável.
 
 ## Testes e verificação
 
@@ -86,7 +87,7 @@ npm run build                          # typecheck (tsc) + build em frontend/dis
 python build.py                        # PyInstaller: dist/PSE-Image
 ```
 
-Hoje o executável empacota a interface em Dear PyGui. Embutir o frontend
+Hoje o executável empacota só o backend (`main.py`). Embutir o frontend
 (build do React servido pelo FastAPI) é uma tarefa pendente.
 
 ## Fluxo de trabalho (git)
@@ -176,8 +177,6 @@ Exemplo: um tipo `kernel`, cujo valor é uma matriz de números.
    componente próprio em `components/params/` (ex.: `KernelEditor.tsx`) ligado
    em `renderParam` de `PseNodeView.tsx`. O widget recebe o valor atual e chama
    `onChange(novoValor)`; a sincronização com o backend é automática.
-6. **Enquanto a UI em Dear PyGui existir**: trate o tipo em `App._param_widget`
-   (`pse/ui/app.py`), que hoje lança `ValueError` para tipos desconhecidos.
 
 ### 3. Elemento novo no card (miniaturas das saídas, botão de download, histograma)
 
