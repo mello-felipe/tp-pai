@@ -113,6 +113,6 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 - [ ] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
 - [x] Segmentação (limiarização manual ou Otsu)
 - [x] Diferença entre imagens
-- [ ] Operação morfológica (operação + elemento estruturante)
+- [x] Operação morfológica (operação + elemento estruturante)
 - [x] Complemento
 - [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
