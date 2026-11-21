@@ -112,7 +112,7 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 - [x] Processamento pontual (brilho/contraste)
 - [ ] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
 - [ ] Segmentação
-- [ ] Diferença entre imagens
+- [x] Diferença entre imagens
 - [ ] Operação morfológica (operação + elemento estruturante)
 - [x] Complemento
 - [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
