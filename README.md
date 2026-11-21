@@ -114,5 +114,5 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 - [ ] Segmentação
 - [ ] Diferença entre imagens
 - [ ] Operação morfológica (operação + elemento estruturante)
-- [ ] Complemento
+- [x] Complemento
 - [ ] Executável com o frontend embutido, base de imagens, manual e vídeo
