@@ -110,7 +110,7 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 
 - [x] Leitura PNG, conversão para cinza (nós separados), Exibição, Gravação
 - [x] Processamento pontual (brilho/contraste)
-- [ ] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
+- [x] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
 - [x] Segmentação (limiarização manual ou Otsu)
 - [x] Diferença entre imagens
 - [x] Operação morfológica (operação + elemento estruturante)
