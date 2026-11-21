@@ -109,7 +109,7 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 ## Pendente (obrigatórios do TP)
 
 - [x] Leitura PNG, conversão para cinza (nós separados), Exibição, Gravação
-- [ ] Processamento pontual (brilho/contraste)
+- [x] Processamento pontual (brilho/contraste)
 - [ ] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
 - [ ] Segmentação
 - [ ] Diferença entre imagens
