@@ -58,8 +58,6 @@ htmlcov/
 Thumbs.db
 desktop.ini
 
-# Dear PyGui / ImGui (layout salvo automaticamente)
-imgui.ini
 
 # ---------------------------------------------------------------------------
 # Frontend (React + Vite)
