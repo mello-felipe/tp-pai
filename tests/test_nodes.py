@@ -131,3 +131,25 @@ def test_display_passes_image_through(img):
 def test_display_without_image():
     with pytest.raises(NodeError):
         run("display", {"imagem": None})
+
+
+def test_otsu_splits_two_level_image():
+    # Dois níveis bem separados (10 e 200): o limiar ótimo fica em 10
+    # (w0*w1*(mu0-mu1)^2 é constante para qualquer t em [10, 199]; o argmax
+    # pega o primeiro t desse platô, que é 10).
+    img = np.array([[10, 10, 200, 200], [10, 10, 200, 200]], np.uint8)
+    out = run("segmentacao_otsu", {"imagem": img})
+    assert out["binária"].dtype == np.uint8
+    assert out["binária"].tolist() == [[0, 0, 255, 255], [0, 0, 255, 255]]
+    assert out["_status"] == "limiar (Otsu) = 10"
+
+
+def test_otsu_requires_gray_image():
+    with pytest.raises(NodeError):
+        run("segmentacao_otsu", {"imagem": None})
+
+
+def test_otsu_rejects_single_level_image():
+    img = np.full((3, 3), 128, np.uint8)
+    with pytest.raises(NodeError, match="único nível"):
+        run("segmentacao_otsu", {"imagem": img})
