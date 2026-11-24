@@ -80,6 +80,6 @@ export function ParamField({ param, value, onChange }: Props) {
         </label>
       );
     default:
-      return null; // "file_open" e "action" dependem da API (upload e ações)
+      return null; // "file_open", "kernel" e "action" têm componentes próprios (PseNodeView)
   }
 }

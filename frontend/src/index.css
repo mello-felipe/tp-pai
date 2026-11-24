@@ -221,3 +221,31 @@ body {
   stroke: var(--error);
   stroke-dasharray: 4 3;
 }
+
+.kernel-controls {
+  display: flex;
+  gap: 4px;
+}
+
+.kernel-controls select {
+  font: inherit;
+  padding: 2px 4px;
+}
+
+.kernel-grid {
+  display: grid;
+  gap: 2px;
+  max-width: 240px;
+}
+
+.kernel-grid input {
+  width: 100%;
+  min-width: 0;
+  padding: 2px;
+  font: inherit;
+  text-align: center;
+}
+
+.kernel-sum {
+  color: var(--muted);
+}

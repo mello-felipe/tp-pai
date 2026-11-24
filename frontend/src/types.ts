@@ -9,9 +9,12 @@ export type ParamKind =
   | "dir"
   | "file_open"
   | "file_save"
+  | "kernel"
   | "action";
 
-export type ParamValue = number | string | boolean;
+export type Kernel = number[][];
+
+export type ParamValue = number | string | boolean | Kernel;
 
 export interface ParamSpec {
   name: string;
