@@ -65,14 +65,14 @@ canvas.
 | **Convolução** | **Operação:** Convolução ou Mediana. **Máscara:** tamanho (3×3 a 9×9), **Preencher com…** (Média, Gaussiana, Laplaciano, Sobel, Nitidez, Identidade) e pesos editáveis um a um. **Dividir pela soma dos pesos** (ignorado quando a soma é 0). **Borda:** Replicar ou Zero. **Saída:** Limitar 0–255, Valor absoluto (bordas) ou Normalizar mín–máx. A Mediana usa só o tamanho da máscara. |
 | **Limiarização** | Segmentação: tom maior que o limiar vira branco (objeto), o resto preto. **Método:** Otsu (automático) ou Manual (**Limiar** 0–255). **Inverter** para objeto escuro. Mostra o limiar usado. |
 | **Morfologia** | **Operação:** Erosão, Dilatação, Abertura (remove pontos soltos) ou Fechamento (fecha buracos). **Elemento:** Quadrado, Cruz ou Disco. **Tamanho:** 3×3 a 9×9. Use em imagem binária (depois da Limiarização) ou em tons de cinza. |
-| **Diferença** | Entradas A e B, do mesmo tamanho. **Modo:** Absoluta \|A − B\| ou Com sinal (cinza = iguais). Mostra **MSE** e **PSNR**. |
+| **Diferença** | Entradas A e B, do mesmo tamanho. Calcula \|A − B\| pixel a pixel: preto = iguais, mais claro = mais diferentes. Mostra a **diferença média**. |
 
 ## 5. Avaliar os resultados
 
 - Coloque blocos **Exibir** em qualquer ponto do fluxo para comparar etapas lado a lado.
 - Clique na miniatura para ver a imagem em tamanho real.
 - Use **Diferença** entre a imagem original (ou de referência) e o resultado:
-  quanto menor o **MSE** e maior o **PSNR**, mais parecidas as imagens.
+  quanto mais escura a imagem e menor a **diferença média**, mais parecidas as imagens.
 
 ## 6. Exemplos com a base de imagens (`samples/`)
 

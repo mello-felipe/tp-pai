@@ -41,6 +41,9 @@ pse/
     to_grayscale.py  Escala de Cinza
     display.py       Exibir (cinza ou RGB)
     save_png.py      Salvar PNG (cinza ou RGB)
+    brilho_contraste.py  Brilho e Contraste (processamento pontual)
+    complemento.py       Complemento (negativo)
+    diferenca.py         Diferença |A − B| entre duas imagens
   api/       backend FastAPI: rotas, validação, workspace (grafo persistente), upload
 frontend/    React + Vite + React Flow + zustand
   src/
@@ -110,12 +113,12 @@ veja [Estendendo os cards](DEVELOPMENT.md#estendendo-os-cards).
 ## Pendente (obrigatórios do TP)
 
 - [x] Leitura PNG, conversão para cinza (nós separados), Exibição, Gravação
-- [ ] Processamento pontual (brilho/contraste)
+- [x] Processamento pontual (brilho/contraste)
 - [ ] Convolução com máscara parametrizável + máscaras conhecidas (média, mediana, Laplaciano)
 - [ ] Segmentação
-- [ ] Diferença entre imagens
+- [x] Diferença entre imagens
 - [ ] Operação morfológica (operação + elemento estruturante)
-- [ ] Complemento
+- [x] Complemento
 - [x] Base de imagens (`samples/`)
 - [ ] Executável com o frontend embutido
 - [x] Manual de utilização (`MANUAL.md`)
